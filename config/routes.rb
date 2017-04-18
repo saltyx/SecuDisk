@@ -1,0 +1,35 @@
+Rails.application.routes.draw do
+  get 'main/index'
+
+  get 'login/index', to: 'login#index'
+  root 'login#index'
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  namespace :api do
+    namespace :v1 do
+      post 'login/', to: 'login#index'
+
+      post 'upload/:id', to: 'upload#upload'
+      post 'upload_big_file/:id', to: 'upload#upload_big_file'
+
+      post 'folder/create', to: 'folder#create'
+      delete 'folder/delete', to: 'folder#delete'
+      put 'folder/update', to: 'folder#update'
+      post 'folder/encrypt', to: 'folder#encrypt'
+      post 'folder/decrypt', to: 'folder#decrypt'
+      get 'folder/:id', to: 'folder#files_by_folder'
+
+      post 'file/encrypt', to: 'file#encrypt'
+      post 'file/decrypt', to: 'file#decrypt'
+      put 'file/copy', to: 'file#copy'
+      delete 'file/delete',to: 'file#delete'
+      put 'file/move', to: 'file#move'
+      put 'file/update', to: 'file#update'
+      post 'file/share', to: 'file#share'
+      post 'file/share/cancel', to: 'file#cancel_sharing'
+      get 'file/:id', to: 'file#get_the_file'
+    end
+  end
+
+
+
+end
