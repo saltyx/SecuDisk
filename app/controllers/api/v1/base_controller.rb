@@ -66,5 +66,4 @@ class Api::V1::BaseController < ActionController::API
     error(401, 'params can not be null')
   end
 
-
 end

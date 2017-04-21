@@ -28,10 +28,11 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'active_model_serializers'
 gem 'pundit'
 gem 'jquery-rails', '~> 4.3', '>= 4.3.1'
+gem 'semantic-ui-sass', '~> 2.2', '>= 2.2.9.3'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
-  gem 'semantic-ui-sass', '~> 2.2', '>= 2.2.9.3'
+
 end
 
 group :development do

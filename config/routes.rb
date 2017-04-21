@@ -1,9 +1,12 @@
 Rails.application.routes.draw do
-  get 'main/index'
-
-  get 'login/index', to: 'login#index'
+  # main part
+  get 'main', to: 'main#index'
+  get 'login', to: 'login#index'
+  post 'login/verify', to: 'login#verify'
   root 'login#index'
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # API part
   namespace :api do
     namespace :v1 do
       post 'login/', to: 'login#index'

@@ -7,7 +7,12 @@ class Api::V1::UploadController < Api::V1::BaseController
   def upload
 
     filesize = upload_param[:filesize].to_i
-    filename = check_storage?(upload_param[:file], filesize)
+    if upload_param[:filename].nil?
+      filename = check_storage?(upload_param[:file], filesize)
+    else
+      filename = upload_param[:filename].to_s
+    end
+
     folder_id = upload_param[:id]
 
     dir = "#{Rails.root}/disk/#{current_user.name}/"
@@ -136,7 +141,7 @@ class Api::V1::UploadController < Api::V1::BaseController
   private
 
   def upload_param
-    params.permit(:id,:file,:filesize)
+    params.permit(:id,:file,:filesize,:filename)
   end
 
   def big_file_param
@@ -145,6 +150,7 @@ class Api::V1::UploadController < Api::V1::BaseController
 
   def check_storage? (file, filesize)
     if !current_user.nil? && current_user.total_storage >= (current_user.used_storage+filesize)
+
       file.original_filename
     else
       nil
