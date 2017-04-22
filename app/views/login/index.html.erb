@@ -1,4 +1,4 @@
-<div class="ui middle aligned center aligned grid">
+<div class="ui middle aligned center aligned grid" ng-controller="loginCtrl">
   <div class="column">
     <h2 class="ui teal huge header">
 
@@ -6,27 +6,39 @@
         SecuDisk
       </div>
     </h2>
-    <form id="login_form" class="ui large form" method="post" action="/login/verify">
+    <form name="loginForm" class="ui large form" method="post">
       <div class="ui stacked segment">
         <div class="field">
           <div class="ui left icon input">
             <i class="user icon"></i>
-            <input type="text" name="email" placeholder="E-mail address">
+            <input type="email" name="email" ng-model="email" placeholder="邮箱" required>
           </div>
         </div>
         <div class="field">
           <div class="ui left icon input">
             <i class="lock icon"></i>
-            <input type="password" name="password" placeholder="Password">
+            <input type="password" name="password" ng-model="password" placeholder="密码" required>
           </div>
         </div>
-        <div class="ui fluid large teal submit button">Login</div>
+        <input type="submit" class="ui fluid large teal submit button"
+               ng-disabled="loginForm.email.$pristine || loginForm.email.$invalid || loginForm.password.$pristine || loginForm.password.$invalid"
+             ng-click="submit()" value="登录"/>
       </div>
-      <div class="ui error message"></div>
     </form>
-
+    <div class="ui error message" ng-show="loginForm.email.$dirty && loginForm.email.$invalid && loginForm.password.$dirty">
+      <ul class="list">
+        <li ng-show="loginForm.email.$error.required">请输入邮箱</li>
+        <li ng-show="loginForm.email.$error.email">请输入正确的邮箱</li>
+        <li ng-show="loginForm.password.$error.required">请输入密码</li>
+      </ul>
+    </div>
+    <div class="ui error message" ng-show="wrongCredit && loginForm.email.$dirty && loginForm.password.$dirty">
+      <ul class="list">
+        <li ng-show="wrongCredit && loginForm.email.$dirty && loginForm.password.$dirty">账号或密码有误</li>
+      </ul>
+    </div>
     <div class="ui message">
-      New to us? <a href="#">Sign Up</a>
+      没有账号? <a href="#">注册</a>
     </div>
   </div>
 </div>

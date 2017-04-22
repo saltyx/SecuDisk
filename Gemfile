@@ -40,5 +40,9 @@ group :development do
   gem 'web-console', '>= 3.3.0'
 end
 
+source 'http://insecure.rails-assets.org' do
+  gem 'rails-assets-angularjs'
+end
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

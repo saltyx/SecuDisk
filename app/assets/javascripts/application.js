@@ -3,4 +3,7 @@
  */
 //= require jquery
 //= require semantic-ui
-
+//= require angularjs
+//= require init
+//= require login
+//= require main

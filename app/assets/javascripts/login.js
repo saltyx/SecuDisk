@@ -1,52 +1,43 @@
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
-//= require jquery
-//= require semantic-ui
 
-$(document)
-    .ready(function() {
-        var loginForm = $('.ui.form');
-        loginForm.form({
-            fields: {
-                email: {
-                    identifier  : 'email',
-                    rules: [
-                        {
-                            type   : 'empty',
-                            prompt : 'Please enter your e-mail'
-                        },
-                        {
-                            type   : 'email',
-                            prompt : 'Please enter a valid e-mail'
-                        }
-                    ]
-                },
-                password: {
-                    identifier  : 'password',
-                    rules: [
-                        {
-                            type   : 'empty',
-                            prompt : 'Please enter your password'
-                        }
-                    ]
-                }
-            }
-        });
-
-        loginForm.submit(function (ev) {
-            $.ajax({
-                type: loginForm.attr('method'),
-                beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
-                url: loginForm.attr('action'),
-                data: loginForm.serialize(),
-                success: function (data) {
-                    console.log(data);
-                    if ('success' === data) {
-                        window.location.href = '/main';
+app.controller('loginCtrl', function ($scope,$http) {
+    $scope.wrongCredit = false;
+    if (0 === localStorage.length) {
+        $scope.submit = function () {
+            $http({
+                method: 'post',
+                url: '/api/v1/login',
+                data: {
+                    user: {
+                        name: $scope.email,
+                        password: $scope.password
                     }
                 }
+            }).then(function successCallback(response) {
+                $scope.wrongCredit = false;
+                localStorage.setItem('token', response.data);
+                window.location.href = '/main';
+            }, function errorCallback(response) {
+                if (401 === response.status) {
+                    $scope.wrongCredit = true;
+                }
             })
-            ev.preventDefault();
+        }
+    } else {
+        var token = localStorage.getItem('token');
+        //verify token
+        $http({
+            method: 'get',
+            url: 'api/v1/folder/0',
+            headers: {
+                'Authorization': 'Token token='+token
+            }
+        }).then(function success (response) {
+            //token valid
+            window.location.href = '/main';
+        }, function error(response) {
+            localStorage.clear();
         })
-
-    });
+    }
+});

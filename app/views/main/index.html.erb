@@ -1,59 +1,128 @@
-<header>
+<div ng-controller="mainCtrl">
   <div class="ui attached large stackable menu">
-  <div class="ui container">
-    <div class="left item">
-      <i class="cloud icon"></i> SecuDisk
-    </div>
-    <div class="item">
-      <div class="ui big icon input">
-        <input type="text" placeholder="Search...">
-        <i class="search icon"></i>
+    <div class="ui container">
+      <div class="left item">
+        <i class="cloud icon"></i> SecuDisk
       </div>
-    </div>
-    <a class="item">
-      <i class="home icon"></i> Home
-    </a>
-    <a class="item">
-      <i class="grid layout icon"></i> Create Folder
-    </a>
-    <a class="item">
-      <i class="mail icon"></i> Messages
-    </a>
-    <div class="ui simple dropdown item">
-      More
-      <i class="dropdown icon"></i>
-      <div class="menu">
-        <a class="item"><i class="edit icon"></i> Edit Profile</a>
-        <a class="item"><i class="globe icon"></i> Choose Language</a>
-        <a class="item"><i class="settings icon"></i> Account Settings</a>
+      <div class="item">
+        <div class="ui big icon input">
+          <input type="text" placeholder="搜索...">
+          <i class="search icon"></i>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-</header>
-<main>
-  <div class="ui container">
-    <br>
-    <div class="ui grid">
-      <div class="four wide column">
-        <div class="ui card">
-          <div class="content">
-            <a class="header">Kristy<i class="lock icon"></i></a>
-            <div class="meta">
-              <span class="date">Created at</span>
-            </div>
-            <div class="description">
-              <div class="right aligned">
-
-              </div>
-            </div>
-          </div>
-          <div class="ui bottom attached button">
-            <i class="ellipsis vertical icon"></i>
-          </div>
+      <a class="item" href="/main">
+        <i class="home icon"></i> 回首页
+      </a>
+      <a class="item" ng-click="createFolder()">
+        <i class="add square icon"></i> 新建文件夹
+      </a>
+      <a class="item" ng-click="uploadFile()">
+        <i class="cloud upload icon"></i> 上传文件
+      </a>
+      <div class="ui simple dropdown item">
+        更多
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <a class="item" ng-click="logout()"><i class="sign out icon"></i>退出</a>
         </div>
       </div>
     </div>
   </div>
-</main>
+  <div class="ui container">
+    <br>
+    <div class="ui red segment">
+      <div class="ui steps" ng-model="navFolders">
+        <div class="link step" ng-repeat="nav in navFolders">
+          <i class="folder icon"></i>
+          <div class="content">
+            <div class="title">{{nav.name}}</div>
+            <div class="description"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ui stacked segment">
+      <div class="ui teal segment">文件夹</div>
+      <div class="ui grid" ng-model="folders">
+        <div class="four wide column" ng-repeat="folder in folders track by $index">
+          <a class="ui link card" ng-click="changeFolder(folder.id, folder.file_name)">
+            <div class="content">
+              <div class="header">{{folder.file_name}}</div>
+              <div class="meta">
+                <span class="category"><i class="lock icon"></i></span>
+              </div>
+              <div class="description">
+                <p>创建于 {{folder.created_at}}</p>
+                <p>更新于 {{folder.updated_at}}</p>
+              </div>
+            </div>
+            <div class="extra content">
+              <div class="right floated author">
+                <div class="ui button" ng-click="createFolder();$event.stopPropagation();">修改</div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div><br>
+      <div class="ui warning icon message" ng-show="folders.length === 0">
+        <i class="info icon"></i>
+        <div class="content">
+          <div class="header">
+            当前文件夹没有文件夹，需要新建吗？
+          </div>
+        </div>
+        <div class="extra content">
+          <button class="ui positive basic button" ng-click="createFolder()">新建文件夹</button>
+        </div>
+      </div>
+    </div>
+    <div class="ui stacked segment">
+      <div class="ui blue segment">文件</div>
+      <div class="ui grid" ng-model="files">
+        <div class="four wide column" ng-repeat="file in files track by $index">
+          <div class="ui link card">
+            <div class="content">
+              <div class="header">{{file.file_name}}</div>
+              <div class="meta">
+                <span class="category"><i class="lock icon"></i></span>
+              </div>
+              <div class="description">
+                <p>创建于 {{file.created_at}}</p>
+                <p>更新于 {{file.updated_at}}</p>
+                <p>大小为 {{file.file_size}} b</p>
+                <p>共下载 {{file.download_times}}次</p>
+              </div>
+            </div>
+            <div class="extra content">
+              <div class="right floated author">
+                <div class="ui button">修改</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="ui warning icon message" ng-show="files.length === 0">
+        <i class="info icon"></i>
+        <div class="content">
+          <div class="header">
+            当前文件夹没有文件，现在上传？
+          </div>
+        </div>
+        <div class="extra content">
+          <button class="ui positive basic button" ng-click="uploadFile()">上传文件</button>
+        </div>
+      </div>
+    </div>
+    <div class="ui modal">
+      <div class="header">Header</div>
+      <div class="content">
+        <p></p>
+        <p></p>
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 

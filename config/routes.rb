@@ -2,9 +2,8 @@ Rails.application.routes.draw do
   # main part
   get 'main', to: 'main#index'
   get 'login', to: 'login#index'
-  post 'login/verify', to: 'login#verify'
   root 'login#index'
-
+  get 'main/:id', to: 'main#change_folder'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   # API part
   namespace :api do
