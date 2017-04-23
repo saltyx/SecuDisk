@@ -4,5 +4,14 @@
 
 
 .header{
-  word-break: break-all;
+  //word-break: break-all;
+  //overflow: scroll;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }

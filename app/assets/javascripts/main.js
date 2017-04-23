@@ -9,11 +9,10 @@ app.controller('mainCtrl',function ($scope, $http) {
         change(1);
 
         $scope.navFolders = [];
-        $scope.navFolders.push({name: 'Root'});
-
+        $scope.navFolders.push({name: 'Root', id: 1});
         //create new folder
         $scope.createFolder = function () {
-            $('.ui.modal').modal({
+            $('#createFolderModel').modal({
                 onApprove: function () {
                     createFolder($scope.newFolderName);
                 }
@@ -26,15 +25,32 @@ app.controller('mainCtrl',function ($scope, $http) {
 
         };
 
+        //delete folder
+        $scope.deleteFolder = function (id) {
+            $('#confirmDeleteAction').modal({
+                onApprove: function () {
+                    deleteFolder(id);
+                }
+            }).modal('show');
+
+        };
+
+        //navigator for folder
+        $scope.navFolder = function (id, index) {
+            if (id === CurrentFolder) return;
+            $scope.navFolders.splice(index+1);
+            change(id);
+        };
+
         //logout
         $scope.logout = function () {
             localStorage.clear();
             window.location.href = '/login';
-        }
+        };
 
         $scope.changeFolder = function (id, fileName) {
             change(id);
-            $scope.navFolders.push({name: fileName});
+            $scope.navFolders.push({name: fileName, id: id});
         }
 
     }
@@ -76,9 +92,36 @@ app.controller('mainCtrl',function ($scope, $http) {
                     from_folder: CurrentFolder
                 }
             }
-        }).then(function success() {
-            console.log(CurrentFolder);
-            change(CurrentFolder);
+        }).then(function success(response) {
+            if (200 === response.data.success) {
+                change(CurrentFolder);
+            } else {
+                alert(response.data.info);
+            }
+
+        }, function error(response) {
+            alert(response.status);
+        })
+    }
+
+    function deleteFolder(id) {
+        $http({
+            method: 'delete',
+            url: 'api/v1/folder/delete',
+            data: {
+                folder: {
+                    folder_id: id
+                }
+            },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function success(response) {
+            if (200 === response.data.success) {
+                change(CurrentFolder);
+            } else {
+                alert(response.data.info);
+            }
         }, function error(response) {
             alert(response.status);
         })
