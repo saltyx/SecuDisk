@@ -12,3 +12,5 @@ app.run(function ($http) {
         $http.defaults.headers.common.Authorization = 'Token token=' + localStorage.getItem('token');
     }
 });
+
+var CurrentFolder = 1;

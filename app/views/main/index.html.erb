@@ -58,7 +58,7 @@
             </div>
             <div class="extra content">
               <div class="right floated author">
-                <div class="ui button" ng-click="createFolder();$event.stopPropagation();">修改</div>
+                <div class="ui button" ng-click="$event.stopPropagation();">修改</div>
               </div>
             </div>
           </a>
@@ -115,11 +115,19 @@
       </div>
     </div>
     <div class="ui modal">
-      <div class="header">Header</div>
+      <div class="header">新建文件夹</div>
       <div class="content">
-        <p></p>
-        <p></p>
-        <p></p>
+        <div class="ui fluid icon input">
+          <i class="edit icon"></i>
+          <input type="text" placeholder="请输入文件夹名称..." ng-model="newFolderName">
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui buttons">
+          <button class="ui cancel button">取消</button>
+          <div class="or"></div>
+          <button class="ui positive button" ng-disabled="undefined === newFolderName || '' === newFolderName">确认</button>
+        </div>
       </div>
     </div>
   </div>

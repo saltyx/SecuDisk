@@ -13,15 +13,17 @@ app.controller('mainCtrl',function ($scope, $http) {
 
         //create new folder
         $scope.createFolder = function () {
-            alert('create folder');
-            $('.ui.modal')
-                .modal('show')
-            ;
+            $('.ui.modal').modal({
+                onApprove: function () {
+                    createFolder($scope.newFolderName);
+                }
+            }).modal('show');
+
         };
 
         //upload file
         $scope.uploadFile = function () {
-            alert('upload file');
+
         };
 
         //logout
@@ -58,8 +60,27 @@ app.controller('mainCtrl',function ($scope, $http) {
             url: 'api/v1/folder/'+id
         }).then(function success(response) {
             refresh(response.data.info);
+            CurrentFolder = id;
         }, function error(response) {
             window.location.href = '/main'
         });
+    }
+
+    function createFolder(name) {
+        $http({
+            method: 'post',
+            url: 'api/v1/folder/create',
+            data: {
+                folder: {
+                    folder_name: name,
+                    from_folder: CurrentFolder
+                }
+            }
+        }).then(function success() {
+            console.log(CurrentFolder);
+            change(CurrentFolder);
+        }, function error(response) {
+            alert(response.status);
+        })
     }
 });
