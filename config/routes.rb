@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       post 'folder/encrypt', to: 'folder#encrypt'
       post 'folder/decrypt', to: 'folder#decrypt'
       get 'folder/:id', to: 'folder#files_by_folder'
+      get 'folder/info/:id', to: 'folder#folder_info'
 
       post 'file/encrypt', to: 'file#encrypt'
       post 'file/decrypt', to: 'file#decrypt'

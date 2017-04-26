@@ -83,6 +83,12 @@ class Api::V1::FolderController < Api::V1::BaseController
     end
   end
 
+  def folder_info
+    folder_id = get_files_params[:id]
+    folder = UserFileHelper.get_folder_info(folder_id.to_i, current_user.id)
+    response_status(200, folder.to_json)
+  end
+
   private
 
   def create_folder_params

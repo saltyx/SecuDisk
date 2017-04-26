@@ -35,6 +35,19 @@ app.controller('mainCtrl',function ($scope, $http) {
 
         };
 
+        //edit folder
+        $scope.editFolder = function (id) {
+            getFolderDetail(id);
+        };
+
+        $scope.deleteFile = function (id) {
+            $('#confirmDeleteFileAction').modal({
+                onApprove: function () {
+                    deleteFile(id);
+                }
+            }).modal('show');
+        };
+
         //navigator for folder
         $scope.navFolder = function (id, index) {
             if (id === CurrentFolder) return;
@@ -122,6 +135,45 @@ app.controller('mainCtrl',function ($scope, $http) {
             } else {
                 alert(response.data.info);
             }
+        }, function error(response) {
+            alert(response.status);
+        })
+    }
+
+    function deleteFile(id) {
+        $http({
+            method: 'delete',
+            url: 'api/v1/file/delete',
+            data: {
+                file: {
+                    id : id
+                }
+            },
+            headers : {
+                'Content-Type': 'application/json'
+            }
+        }).then(function success(response) {
+            if (200 === response.data.success) {
+                change(CurrentFolder);
+            } else {
+                alert(response.data.info);
+            }
+        }, function error(response) {
+            alert(response.status);
+        });
+    }
+
+    function getFolderDetail(id) {
+        $http({
+            method: 'get',
+            url: 'api/v1/folder/info/' + id
+        }).then(function success(response) {
+            $scope.detailedInfo = angular.fromJson(response.data.info);
+            $('#showDetailedInfo').modal({
+                onApprove: function () {
+
+                }
+            }).modal('show');
         }, function error(response) {
             alert(response.status);
         })

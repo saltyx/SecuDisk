@@ -58,7 +58,7 @@
             </div>
             <div class="extra content">
               <div class="ui two buttons">
-                <div class="ui basic green button" ng-click="$event.stopPropagation();">修改</div>
+                <div class="ui basic green button" ng-click="editFolder(folder.id);$event.stopPropagation();">修改</div>
                 <div class="ui basic red button" ng-click="deleteFolder(folder.id);$event.stopPropagation();">删除</div>
               </div>
             </div>
@@ -97,7 +97,7 @@
             <div class="extra content">
               <div class="ui two buttons">
                 <div class="ui basic green button">修改</div>
-                <div class="ui basic red button">删除</div>
+                <div class="ui basic red button" ng-click="deleteFile(file.id)">删除</div>
               </div>
             </div>
           </div>
@@ -147,7 +147,33 @@
         </div>
       </div>
     </div>
+    <div id="confirmDeleteFileAction" class="ui modal">
+      <div class="header">删除文件</div>
+      <div class="content">
+        <div class="ui error message">
+          <i class="warning sign icon"></i>确认删除吗？
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui buttons">
+          <button class="ui cancel button">取消</button>
+          <div class="or"></div>
+          <button class="ui positive button">确认</button>
+        </div>
+      </div>
+    </div>
+    <div id="showDetailedInfo" class="ui modal" ng-model="detailedInfo">
+      <div class="header">{{detailedInfo.file_name}} 详情</div>
+      <div class="actions">
+        <div class="ui buttons">
+          <button class="ui cancel button">取消</button>
+          <div class="or"></div>
+          <button class="ui positive button">确认</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
 
 
