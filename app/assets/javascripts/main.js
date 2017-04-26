@@ -36,8 +36,13 @@ app.controller('mainCtrl',function ($scope, $http) {
         };
 
         //edit folder
+        $scope.renameFolder = function (id) {
+            renameFolder(id);
+        };
+
         $scope.editFolder = function (id) {
             getFolderDetail(id);
+            $('#chooseFolderSetting').modal('show');
         };
 
         $scope.deleteFile = function (id) {
@@ -168,14 +173,39 @@ app.controller('mainCtrl',function ($scope, $http) {
             method: 'get',
             url: 'api/v1/folder/info/' + id
         }).then(function success(response) {
-            $scope.detailedInfo = angular.fromJson(response.data.info);
-            $('#showDetailedInfo').modal({
-                onApprove: function () {
+            $scope.folder = angular.fromJson(response.data.info);
 
-                }
-            }).modal('show');
         }, function error(response) {
             alert(response.status);
         })
+    }
+
+    function renameFolder(id) {
+        $scope.operation = {
+            name: '重命名',
+            placeholder: '输入新名称......'
+        }
+        $('#showDetailedInfo').modal({
+            onApprove: function () {
+                $http({
+                    method: 'put',
+                    url: 'api/v1/folder/update',
+                    data: {
+                        folder: {
+                            new_name: $scope.operation.text,
+                            folder_id: id
+                        }
+                    }
+                }).then(function success(response) {
+                    if (200 === response.data.success) {
+                        change(CurrentFolder);
+                    } else {
+                        alert(response.data.info);
+                    }
+                }, function error(response) {
+                    alert(response.status);
+                })
+            }
+        }).modal('show');
     }
 });

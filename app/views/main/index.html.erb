@@ -162,13 +162,48 @@
         </div>
       </div>
     </div>
-    <div id="showDetailedInfo" class="ui modal" ng-model="detailedInfo">
-      <div class="header">{{detailedInfo.file_name}} 详情</div>
+    <div id="showDetailedInfo" class="ui modal" ng-model="operation">
+      <div class="header">{{operation.name}}</div>
+      <div class="content">
+        <div class="ui fluid icon input">
+          <i class="edit icon"></i>
+          <input type="text" placeholder="{{operation.placeholder}}" ng-model="operation.text">
+        </div>
+      </div>
       <div class="actions">
         <div class="ui buttons">
           <button class="ui cancel button">取消</button>
           <div class="or"></div>
-          <button class="ui positive button">确认</button>
+          <button class="ui positive button" ng-disabled="undefined === operation.text || '' === operation.text">确认</button>
+        </div>
+      </div>
+    </div>
+    <div id="chooseFolderSetting" class="ui small modal" ng-model="folder">
+      <div class="header">
+        <i class="setting icon"></i>
+        操作</div>
+      <div class="content">
+        <div class="ui four column inverted grid container">
+          <div class="column">
+            <button class="ui fluid basic button" ng-click="renameFolder(folder.id)">
+              <i class="edit icon"></i>
+              重命名</button>
+          </div>
+          <div class="column">
+            <button class="ui fluid basic button">
+              <i class="lock icon"></i>
+              加密/解密</button>
+          </div>
+          <div class="column">
+            <button class="ui fluid basic button">
+              <i class="download icon"></i>
+              打包下载</button>
+          </div>
+          <div class="column">
+          <button class="ui fluid basic button">
+            <i class="share icon"></i>
+            分享</button>
+        </div>
         </div>
       </div>
     </div>
