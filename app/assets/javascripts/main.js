@@ -60,6 +60,20 @@ app.controller('mainCtrl',function ($scope, $http) {
             change(id);
         };
 
+        //rename file
+        $scope.renameFile = function (id) {
+            renameFile(id);
+        };
+
+        //edit file
+        $scope.editFile = function (id) {
+            $('#chooseFileSetting').modal('show');
+        };
+
+        $scope.download = function (id) {
+            downloadFile(id);
+        };
+
         //logout
         $scope.logout = function () {
             localStorage.clear();
@@ -181,6 +195,14 @@ app.controller('mainCtrl',function ($scope, $http) {
     }
 
     function renameFolder(id) {
+        rename(id, 'api/v1/folder/update');
+    }
+
+    function renameFile(id) {
+        rename(id, 'api/v1/file/update');
+    }
+
+    function rename(id, url) {
         $scope.operation = {
             name: '重命名',
             placeholder: '输入新名称......'
@@ -189,7 +211,7 @@ app.controller('mainCtrl',function ($scope, $http) {
             onApprove: function () {
                 $http({
                     method: 'put',
-                    url: 'api/v1/folder/update',
+                    url: url,
                     data: {
                         folder: {
                             new_name: $scope.operation.text,
@@ -207,5 +229,16 @@ app.controller('mainCtrl',function ($scope, $http) {
                 })
             }
         }).modal('show');
+    }
+
+    function downloadFile(id) {
+        $http({
+            method: 'get',
+            url: 'api/v1/file/' + id
+        }).then(function success() {
+
+        }, function error(response) {
+            alert(response.status);
+        })
     }
 });

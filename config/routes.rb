@@ -30,6 +30,7 @@ Rails.application.routes.draw do
       post 'file/share', to: 'file#share'
       post 'file/share/cancel', to: 'file#cancel_sharing'
       get 'file/:id', to: 'file#get_the_file'
+      get 'file/info/:id', to: 'file#file_info'
     end
   end
 

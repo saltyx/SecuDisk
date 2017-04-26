@@ -89,6 +89,15 @@ class Api::V1::FileController < Api::V1::BaseController
     end
   end
 
+  def file_info
+    file = UserFileHelper.get_the_file_by_id(params[:id], current_user.id)
+    if file.nil?
+      file_not_exist
+    else
+      response_status(200, file.to_json)
+    end
+  end
+
   private
 
   def update_params
