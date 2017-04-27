@@ -4,6 +4,7 @@
 //= require jquery
 //= require semantic-ui
 //= require angularjs
+//= require FileSaver.min
 //= require init
 //= require login
 //= require main

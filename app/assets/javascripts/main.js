@@ -67,6 +67,8 @@ app.controller('mainCtrl',function ($scope, $http) {
 
         //edit file
         $scope.editFile = function (id) {
+            console.log("[edit file]"+id);
+            getFileDetail(id);
             $('#chooseFileSetting').modal('show');
         };
 
@@ -194,6 +196,19 @@ app.controller('mainCtrl',function ($scope, $http) {
         })
     }
 
+    function getFileDetail(id) {
+        $http({
+            method: 'get',
+            url: 'api/v1/file/info/' + id
+        }).then(function success(response) {
+            if (200 == response.data.success) {
+                $scope.file = angular.fromJson(response.data.info);
+            }
+        }, function error(response) {
+            alert(response.status);
+        })
+    }
+
     function renameFolder(id) {
         rename(id, 'api/v1/folder/update');
     }
@@ -213,9 +228,9 @@ app.controller('mainCtrl',function ($scope, $http) {
                     method: 'put',
                     url: url,
                     data: {
-                        folder: {
+                        file: {
                             new_name: $scope.operation.text,
-                            folder_id: id
+                            id: id
                         }
                     }
                 }).then(function success(response) {
@@ -235,8 +250,10 @@ app.controller('mainCtrl',function ($scope, $http) {
         $http({
             method: 'get',
             url: 'api/v1/file/' + id
-        }).then(function success() {
-
+        }).then(function success(response) {
+            var blob = new Blob([response]);
+            var objectUrl = URL.createObjectURL(blob);
+            saveAs(blob, $scope.file.file_name);
         }, function error(response) {
             alert(response.status);
         })
