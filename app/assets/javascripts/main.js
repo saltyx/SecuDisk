@@ -2,7 +2,7 @@
 // All this logic will automatically be available in application.js.
 
 
-app.controller('mainCtrl',function ($scope, $http) {
+app.controller('mainCtrl',function ($scope, $http, Upload) {
     if (0 === localStorage.length) {
         window.location.href = '/login';
     } else {
@@ -22,7 +22,11 @@ app.controller('mainCtrl',function ($scope, $http) {
 
         //upload file
         $scope.uploadFile = function () {
-
+            $('#uploadFile').modal({
+                onApprove: function () {
+                    uploadUncheckedFile();
+                }
+            }).modal('show');
         };
 
         //delete folder
@@ -278,5 +282,27 @@ app.controller('mainCtrl',function ($scope, $http) {
         }, function error(response) {
             alert(response.status);
         })
+    }
+
+    function uploadUncheckedFile() {
+       Upload.upload({
+           url: 'api/v1/upload/'+CurrentFolder,
+           method: 'post',
+           data: {
+               filename: $scope.uncheckedFile.name,
+               filesize: $scope.uncheckedFile.size
+           },
+           file: $scope.uncheckedFile
+       }).then(function (response) {
+           if (200 === response.data.success) {
+               change(CurrentFolder);
+           } else {
+               alert(response.data.info);
+           }
+       }, function (response) {
+           alert(response.status);
+       }, function (evt) {
+           console.log('[progress]'+evt.loaded);
+       })
     }
 });

@@ -236,6 +236,23 @@
         </div>
       </div>
     </div>
+    <div id="uploadFile" class="ui modal">
+      <div class="header">选择文件</div>
+      <div class="content">
+        <div class="ui fluid input">
+          <button class="ui button" ngf-select ng-model="uncheckedFile" accept="image/*">
+            选择</button>
+          <input type="text" disabled="disabled" ng-model="uncheckedFile.name">
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui buttons">
+          <button class="ui cancel button">取消</button>
+          <div class="or"></div>
+          <button class="ui positive button" ng-disabled="undefined === uncheckedFile.name || '' === uncheckedFile.name">确认</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

@@ -10,7 +10,12 @@ class Api::V1::UploadController < Api::V1::BaseController
     if upload_param[:filename].nil?
       filename = check_storage?(upload_param[:file], filesize)
     else
-      filename = upload_param[:filename].to_s
+      if !current_user.nil? && current_user.total_storage >= (current_user.used_storage+filesize)
+        filename = upload_param[:filename].to_s
+      else
+        not_enough_space
+        return
+      end
     end
 
     folder_id = upload_param[:id]

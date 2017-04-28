@@ -3,7 +3,7 @@
  */
 
 
-app = angular.module('myApp',[]);
+app = angular.module('myApp',['ngFileUpload']);
 
 app.run(function ($http) {
     console.log('module.run');
