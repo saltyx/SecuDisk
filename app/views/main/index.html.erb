@@ -85,7 +85,7 @@
       <div class="ui blue segment">文件</div>
       <div class="ui grid" ng-model="files">
         <div class="four wide column" ng-repeat="file in files track by $index">
-          <div class="ui link card">
+          <div class="ui link card" ng-click="editFile(file.id)">
             <div class="content">
               <div class="header">{{file.file_name}}</div>
               <div class="meta">
