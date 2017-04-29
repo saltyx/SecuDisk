@@ -6,7 +6,7 @@
       </div>
       <div class="item">
         <div class="ui big icon input">
-          <input type="text" placeholder="搜索...">
+          <input type="text" placeholder="搜索..." ng-model="queryText" ng-change="search()">
           <i class="search icon"></i>
         </div>
       </div>
@@ -23,6 +23,7 @@
         更多
         <i class="dropdown icon"></i>
         <div class="menu">
+          <a class="item" ng-click="showUploadTasks()"><i class="tasks icon"></i>上传任务</a>
           <a class="item" ng-click="logout()"><i class="sign out icon"></i>退出</a>
         </div>
       </div>
@@ -30,7 +31,7 @@
   </div>
   <div class="ui container">
     <br>
-    <div class="ui red segment">
+    <div class="ui red segment" ng-show="undefined === queryText || '' === queryText">
       <div class="ui steps" ng-model="navFolders">
         <div class="link step" ng-click="navFolder(nav.id,$index)" ng-repeat="nav in navFolders track by $index">
           <i class="folder icon"></i>
@@ -40,6 +41,9 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="ui info message" ng-show="undefined !== queryText && '' !== queryText">
+      <div class="header">搜索模式</div>
     </div>
     <div class="ui stacked segment">
       <div class="ui teal segment">文件夹</div>
@@ -65,7 +69,7 @@
           </a>
         </div>
       </div><br>
-      <div class="ui warning icon message" ng-show="folders.length === 0">
+      <div class="ui warning icon message" ng-show="folders.length === 0 && (queryText === '' || queryText === undefined)">
         <i class="info icon"></i>
         <div class="content">
           <div class="header">
@@ -104,7 +108,7 @@
         </div>
       </div>
       <br>
-      <div class="ui warning icon message" ng-show="files.length === 0">
+      <div class="ui warning icon message" ng-show="files.length === 0 && (queryText === '' || queryText === undefined)">
         <i class="info icon"></i>
         <div class="content">
           <div class="header">
@@ -253,6 +257,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </div>
 

@@ -14,3 +14,4 @@ app.run(function ($http) {
 });
 
 var CurrentFolder = 1;
+var UploadTasks = [];

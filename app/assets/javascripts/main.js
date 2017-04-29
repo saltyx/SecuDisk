@@ -89,6 +89,19 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
         $scope.changeFolder = function (id, fileName) {
             change(id);
             $scope.navFolders.push({name: fileName, id: id});
+        };
+
+        $scope.showUploadTasks = function () {
+            $('.sidebar').sidebar('setting', 'transition', 'overlay')
+                .sidebar('toggle');
+        };
+        
+        $scope.search = function () {
+            if (undefined != $scope.queryText && '' !== $scope.queryText) {
+                query($scope.queryText);
+            } else {
+                change(CurrentFolder);
+            }
         }
 
     }
@@ -304,5 +317,20 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
        }, function (evt) {
            console.log('[progress]'+evt.loaded);
        })
+    }
+
+    function query(queryText) {
+        $http({
+            method: 'get',
+            url: 'api/v1/search/'+queryText
+        }).then(function (response) {
+            if (200 === response.data.success) {
+                refresh(response.data.info);
+            } else {
+                alert(response.data.info);
+            }
+        }, function (response) {
+            alert(response.status);
+        });
     }
 });

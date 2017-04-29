@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  namespace :api do
+    namespace :v1 do
+      get 'search/query'
+    end
+  end
+
   # main part
   get 'main', to: 'main#index'
   get 'login', to: 'login#index'
@@ -31,6 +37,8 @@ Rails.application.routes.draw do
       post 'file/share/cancel', to: 'file#cancel_sharing'
       get 'file/:id', to: 'file#get_the_file'
       get 'file/info/:id', to: 'file#file_info'
+
+      get 'search/:query', to: 'search#query'
     end
   end
 
