@@ -80,6 +80,14 @@
           <button class="ui positive basic button" ng-click="createFolder()">新建文件夹</button>
         </div>
       </div>
+      <div class="ui info icon message" ng-show="undefined != queryText && '' !== queryText && folders.length === 0">
+        <i class="info icon"></i>
+        <div class="content">
+          <div class="header">
+            没有搜索到文件夹
+          </div>
+        </div>
+      </div>
     </div>
     <div class="ui stacked segment">
       <div class="ui blue segment">文件</div>
@@ -117,6 +125,14 @@
         </div>
         <div class="extra content">
           <button class="ui positive basic button" ng-click="uploadFile()">上传文件</button>
+        </div>
+      </div>
+      <div class="ui info icon message" ng-show="undefined != queryText && '' !== queryText && files.length === 0">
+        <i class="info icon"></i>
+        <div class="content">
+          <div class="header">
+            没有搜索到文件
+          </div>
         </div>
       </div>
     </div>
