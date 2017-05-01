@@ -52,7 +52,7 @@
           <a class="ui link card" ng-click="changeFolder(folder.id, folder.file_name)">
             <div class="content">
               <div class="header">{{folder.file_name}}</div>
-              <div class="meta">
+              <div class="meta" ng-show="folder.is_encrypted">
                 <span class="category"><i class="lock icon"></i></span>
               </div>
               <div class="description">
@@ -96,7 +96,7 @@
           <div class="ui link card" ng-click="editFile(file.id)">
             <div class="content">
               <div class="header">{{file.file_name}}</div>
-              <div class="meta">
+              <div class="meta" ng-show="file.is_encrypted">
                 <span class="category"><i class="lock icon"></i></span>
               </div>
               <div class="description">
@@ -209,10 +209,15 @@
               <i class="edit icon"></i>
               重命名</button>
           </div>
-          <div class="column">
-            <button class="ui fluid basic button">
+          <div class="column" ng-show="folder.is_encrypted">
+            <button class="ui fluid basic button" ng-click="decrypt(folder.id, true)">
               <i class="lock icon"></i>
-              加密/解密</button>
+              解密</button>
+          </div>
+          <div class="column" ng-show="!folder.is_encrypted">
+            <button class="ui fluid basic button" ng-click="encrypt(folder.id, true)">
+              <i class="lock icon"></i>
+              加密</button>
           </div>
           <div class="column">
             <button class="ui fluid basic button">
@@ -238,10 +243,15 @@
               <i class="edit icon"></i>
               重命名</button>
           </div>
-          <div class="column">
-            <button class="ui fluid basic button">
+          <div class="column" ng-show="file.is_encrypted">
+            <button class="ui fluid basic button" ng-click="decrypt(file.id,false)">
               <i class="lock icon"></i>
-              加密/解密</button>
+              解密</button>
+          </div>
+          <div class="column" ng-show="!file.is_encrypted">
+            <button class="ui fluid basic button" ng-click="encrypt(file.id,false)">
+              <i class="lock icon"></i>
+              加密</button>
           </div>
           <div class="column">
             <button class="ui fluid basic button" ng-click="download(file.id)">
@@ -273,7 +283,12 @@
         </div>
       </div>
     </div>
-
+    <div id="feedback" class="ui small modal">
+      <div class="header">通知</div>
+      <div class="content">
+        {{feedBackMessage}}
+      </div>
+    </div>
   </div>
 </div>
 

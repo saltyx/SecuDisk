@@ -76,6 +76,14 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             $('#chooseFileSetting').modal('show');
         };
 
+        $scope.encrypt = function (id, isFolder) {
+            encrypt(id, isFolder);
+        };
+
+        $scope.decrypt = function (id, isFolder) {
+            decrypt(id, isFolder);
+        };
+
         $scope.download = function (id) {
             downloadFile(id);
         };
@@ -238,7 +246,7 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
         $scope.operation = {
             name: '重命名',
             placeholder: '输入新名称......'
-        }
+        };
         $('#showDetailedInfo').modal({
             onApprove: function () {
                 if (isFolder) {
@@ -332,5 +340,127 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
         }, function (response) {
             alert(response.status);
         });
+    }
+
+    function encrypt(id, isFolder) {
+        if (isFolder) {
+            $scope.operation = {
+                name: '加密文件夹',
+                placeholder: '请输入密码，并且记牢此密码！'
+            };
+        } else {
+            $scope.operation = {
+                name: '加密文件',
+                placeholder: '请输入密码，并且记牢此密码！'
+            }
+        }
+        $('#showDetailedInfo').modal({
+            onApprove: function () {
+                if (isFolder) {
+                    $http({
+                        method: 'post',
+                        url: 'api/v1/folder/encrypt',
+                        data: {
+                            folder : {
+                                folder_id: id,
+                                pass_phrase: $scope.operation.text
+                            }
+                        }
+                    }).then(function (response) {
+                        if (200 === response.data.success) {
+                            change(CurrentFolder);
+                            $scope.feedBackMessage = '操作成功！';
+                            $('#feedback').modal('show');
+                        } else {
+                            alert(response.data.info);
+                        }
+                    }, function (response) {
+                        alert(response.status);
+                    })
+                } else {
+                    $http({
+                        method: 'post',
+                        url: 'api/v1/file/encrypt',
+                        data: {
+                            file : {
+                                id: id,
+                                pass_phrase: $scope.operation.text
+                            }
+                        }
+                    }).then(function (response) {
+                        if (200 === response.data.success) {
+                            change(CurrentFolder);
+                            $scope.feedBackMessage = '操作成功！';
+                            $('#feedback').modal('show');
+                        } else {
+                            alert(response.data.info);
+                        }
+                    }, function (response) {
+                        alert(response.status);
+                    })
+                }
+            }
+        }).modal('show');
+    }
+
+    function decrypt(id, isFolder) {
+        if (isFolder) {
+            $scope.operation = {
+                name: '解密文件夹',
+                placeholder: '请输入密码'
+            };
+        } else {
+            $scope.operation = {
+                name: '解密文件',
+                placeholder: '请输入密码'
+            }
+        }
+        $('#showDetailedInfo').modal({
+            onApprove: function () {
+                if (isFolder) {
+                    $http({
+                        method: 'post',
+                        url: 'api/v1/folder/decrypt',
+                        data: {
+                            folder : {
+                                folder_id: id,
+                                pass_phrase: $scope.operation.text
+                            }
+                        }
+                    }).then(function (response) {
+                        if (200 === response.data.success) {
+                            change(CurrentFolder);
+                            $scope.feedBackMessage = '操作成功！';
+                            $('#feedback').modal('show');
+                        } else {
+                            alert(response.data.info);
+                        }
+                    }, function (response) {
+                        alert(response.status);
+                    })
+                } else {
+                    $http({
+                        method: 'post',
+                        url: 'api/v1/file/decrypt',
+                        data: {
+                            file : {
+                                id: id,
+                                pass_phrase: $scope.operation.text
+                            }
+                        }
+                    }).then(function (response) {
+                        if (200 === response.data.success) {
+                            change(CurrentFolder);
+                            $scope.feedBackMessage = '操作成功！';
+                            $('#feedback').modal('show');
+                        } else {
+                            alert(response.data.info);
+                        }
+                    }, function (response) {
+                        alert(response.status);
+                    })
+                }
+            }
+        }).modal('show');
     }
 });
