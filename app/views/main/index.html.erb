@@ -225,7 +225,7 @@
               打包下载</button>
           </div>
           <div class="column">
-          <button class="ui fluid basic button">
+          <button class="ui fluid basic button" ng-click="share(folder.id)">
             <i class="share icon"></i>
             分享</button>
         </div>
@@ -259,7 +259,7 @@
               下载</button>
           </div>
           <div class="column">
-            <button class="ui fluid basic button">
+            <button class="ui fluid basic button" ng-click="share(file.id)">
               <i class="share icon"></i>
               分享</button>
           </div>
@@ -286,7 +286,7 @@
     <div id="feedback" class="ui small modal">
       <div class="header">通知</div>
       <div class="content">
-        {{feedBackMessage}}
+        <a href="{{feedBackMessage1}}">{{feedBackMessage}}</a>
       </div>
     </div>
   </div>

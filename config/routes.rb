@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
+      get 'download/shared'
+    end
+  end
+
+  namespace :api do
+    namespace :v1 do
       get 'search/query'
     end
   end
@@ -39,6 +45,7 @@ Rails.application.routes.draw do
       get 'file/info/:id', to: 'file#file_info'
 
       get 'search/:query', to: 'search#query'
+      get 'shared/:id', to: 'download#shared'
     end
   end
 

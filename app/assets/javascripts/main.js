@@ -88,6 +88,11 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             downloadFile(id);
         };
 
+        $scope.share = function (id) {
+            share(id);
+        };
+
+
         //logout
         $scope.logout = function () {
             localStorage.clear();
@@ -99,11 +104,6 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             $scope.navFolders.push({name: fileName, id: id});
         };
 
-        $scope.showUploadTasks = function () {
-            $('.sidebar').sidebar('setting', 'transition', 'overlay')
-                .sidebar('toggle');
-        };
-        
         $scope.search = function () {
             if (undefined != $scope.queryText && '' !== $scope.queryText) {
                 query($scope.queryText);
@@ -462,5 +462,28 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
                 }
             }
         }).modal('show');
+    }
+
+    function share(id) {
+        $http({
+            method: 'post',
+            url: 'api/v1/file/share',
+            data: {
+                file: {
+                    id: id
+                }
+            }
+        }).then(function (response) {
+            if (200 === response.data.success) {
+                change(CurrentFolder);
+                $scope.feedBackMessage = "已分享，立刻点击下载吧！";
+                $scope.feedBackMessage1 = "api/v1/shared/"+id;
+                $('#feedback').modal('show');
+            } else {
+                alert(response.data.info);
+            }
+        }, function (response) {
+            alert(response.status);
+        })
     }
 });
