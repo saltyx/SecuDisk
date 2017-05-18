@@ -3,6 +3,9 @@
 
 
 app.controller('mainCtrl',function ($scope, $http, Upload) {
+
+    var dstFolderId = -1;
+    var dstFolderStack = [];
     if (0 === localStorage.length) {
         window.location.href = '/login';
     } else {
@@ -92,6 +95,71 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             share(id);
         };
 
+        $scope.move = function (id) {
+            //current file's id
+            $http.get('/api/v1/folder/1').then(function (response) {
+                if (200 == response.data.success) {
+                    dstFolderStack.push(1);
+                    dstFolderId = 1;
+                    $scope.allFolder = splitFolder(response.data.info);
+                } else {
+                    alert(response.data.info);
+                }
+            }, function (response) {
+                alert(response.status);
+            });
+            $("#chooseFolder").modal('setting', 'closable', false)
+                .modal({
+                    onApprove: function () {
+                        $http.put('/api/v1/file/move',{
+                            file: {
+                                id: id,
+                                dst_folder_id: dstFolderId
+                            }
+                        }).then(function (response) {
+                            if (200 === response.data.success) {
+                                change(CurrentFolder);
+                            } else {
+                                alert(response.data.info);
+                            }
+                        }, function (response) {
+                            alert(response.status);
+                        });
+                    }
+                })
+                .modal('show');
+        };
+
+        $scope.chooseFolder = function (id) {
+            //dst folder id
+            $http.get('/api/v1/folder/'+id).then(function (response) {
+                if (200 == response.data.success) {
+                    dstFolderId = id;
+                    dstFolderStack.push(id);
+                    $scope.allFolder = splitFolder(response.data.info);
+                } else {
+                    alert(response.data.info);
+                }
+            }, function (response) {
+                alert(response.status);
+            });
+        };
+
+        $scope.backToChooseFolder = function () {
+            if (undefined == dstFolderId || dstFolderStack.length === 1)
+                return;
+            dstFolderStack.pop();
+            dstFolderId = dstFolderStack[dstFolderStack.length-1];
+            $http.get('/api/v1/folder/'+dstFolderId).then(function (response) {
+                if (200 === response.data.success) {
+                    $scope.allFolder = splitFolder(response.data.info);
+                } else {
+                    alert(response.data.info);
+                }
+            }, function (response) {
+                alert(response.status);
+            });
+        };
 
         //logout
         $scope.logout = function () {
@@ -112,6 +180,20 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             }
         }
 
+    }
+
+    function splitFolder(data) {
+        var allData = angular.fromJson(data);
+        var folders = [];
+        var files = [];
+        angular.forEach(allData, function (value, key) {
+            if (true === value.is_folder) {
+                folders.push(value);
+            } else {
+                files.push(value);
+            }
+        });
+        return folders;
     }
 
     function refresh(data) {
@@ -486,4 +568,5 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             alert(response.status);
         })
     }
+
 });

@@ -232,12 +232,12 @@
         </div>
       </div>
     </div>
-    <div id="chooseFileSetting" class="ui small modal" ng-model="file">
+    <div id="chooseFileSetting" class="ui modal" ng-model="file">
       <div class="header">
         <i class="setting icon"></i>
         操作</div>
       <div class="content">
-        <div class="ui four column inverted grid container">
+        <div class="ui five column inverted grid container">
           <div class="column">
             <button class="ui fluid basic button" ng-click="renameFile(file.id)">
               <i class="edit icon"></i>
@@ -263,6 +263,11 @@
               <i class="share icon"></i>
               分享</button>
           </div>
+          <div class="column">
+            <button class="ui fluid basic button" ng-click="move(file.id)">
+              <i class="move icon"></i>
+              移动</button>
+          </div>
         </div>
       </div>
     </div>
@@ -287,6 +292,31 @@
       <div class="header">通知</div>
       <div class="content">
         <a href="{{feedBackMessage1}}">{{feedBackMessage}}</a>
+      </div>
+    </div>
+    <div id="chooseFolder" class="ui large modal">
+      <div class="header">选择文件夹</div>
+      <div class="content">
+        <div ng-model="allFolder">
+          <div class="ui secondary button" ng-click="backToChooseFolder()">返回</div>
+          <div class="ui divided list" ng-repeat="folder in allFolder track by $index" ng-show="undefined != allFolder && 0 !== allFolder.length">
+            <div class="item" ng-click="chooseFolder(folder.id)">
+              <i class="folder icon"></i>
+              <div class="content">
+                <div class="header">{{folder.file_name}}</div>
+                创建于 {{folder.created_at}}
+              </div>
+            </div>
+          </div>
+          <div class="ui message" ng-show="undefined === allFolder || 0 === allFolder.length">当前文件夹下无文件夹</div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui buttons">
+          <button class="ui cancel button">取消</button>
+          <div class="or"></div>
+          <button class="ui positive button">确认</button>
+        </div>
       </div>
     </div>
   </div>
