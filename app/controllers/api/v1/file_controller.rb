@@ -38,6 +38,7 @@ class Api::V1::FileController < Api::V1::BaseController
     file = UserFileHelper.get_the_file_by_id(delete_params[:id], current_user.id)
     return file_not_exist if file.nil?
     file.destroy
+    #File.delete(file.file_path)
     ok
   end
 

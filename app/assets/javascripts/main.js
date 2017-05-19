@@ -178,7 +178,11 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             } else {
                 change(CurrentFolder);
             }
-        }
+        };
+
+        $scope.showUploadTasks = function () {
+            $('#uploadTasks').modal('show');
+        };
 
     }
 
@@ -399,13 +403,20 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
        }).then(function (response) {
            if (200 === response.data.success) {
                change(CurrentFolder);
+               var date = new Date();
+               UploadedTasks.push({'filename':$scope.uncheckedFile.name,'time':date.getMonth()+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes()});
+               $scope.allUploadTasks = UploadedTasks;
+               $('.ui .progress').progress('reset').progress('set label', '等待上传');
            } else {
                alert(response.data.info);
+               $('.ui .progress').progress('set error').progress('set label', '出错');
            }
        }, function (response) {
            alert(response.status);
        }, function (evt) {
-           console.log('[progress]'+evt.loaded);
+           var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+           console.log(evt.loaded);
+           $('.ui .progress').progress('set progress', progressPercentage);
        })
     }
 

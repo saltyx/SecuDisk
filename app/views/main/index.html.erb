@@ -319,6 +319,34 @@
         </div>
       </div>
     </div>
+    <div id="uploadTasks" class="ui modal">
+      <div class="header">
+        <i class="upload icon"></i>上传详情</div>
+      <div class="content" ng-model="allUploadTasks">
+        <div class="ui progress">
+          <div class="bar">
+            <div class="progress"></div>
+          </div>
+          <div class="label">当前正在上传</div>
+        </div>
+        <h4 class="ui horizontal divider header">
+          <i class="history icon"></i>
+          历史上传
+        </h4>
+        <table class="ui celled striped table" ng-show="undefined != allUploadTasks && 0 !== allUploadTasks.length">
+          <tbody>
+            <tr class="positive" ng-repeat="task in allUploadTasks track by $index">
+              <td>{{task.filename}}</td>
+              <td>上传时间 {{task.time}}</td>
+              <td><i class="icon checkmark"></i></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="ui message" ng-show="undefined == allUploadTasks || 0 === allUploadTasks.length">
+          还未有上传的文件
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

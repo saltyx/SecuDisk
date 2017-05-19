@@ -33,6 +33,7 @@ class UserFile < ApplicationRecord
       files.destroy unless files.nil?
     else
       #不是目录更新user used_storage
+      File.delete(self.file_path);
       user = User.find(self.user_id)
       user.used_storage = user.used_storage - self.file_size
       user.save

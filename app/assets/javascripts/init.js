@@ -14,4 +14,5 @@ app.run(function ($http) {
 });
 
 var CurrentFolder = 1;
-var UploadTasks = [];
+var UploadedTasks = [];
+var PendingTasks = [];
