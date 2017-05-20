@@ -466,7 +466,7 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
                 isUploading = true;
                 var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                 //console.log(evt.loaded);
-                $('.ui .progress').progress('set progress', progressPercentage);
+                $('.ui .progress').progress('set progress', progressPercentage).progress('set label', '正在上传'+file.name);
             })
         }
     }
@@ -664,7 +664,7 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             if (200 === response.data.success) {
                 var progressPercentage = parseInt(100.0 * (chunkIndex+1) / totalChunks);
                 //console.log(evt.loaded);
-                $('.ui .progress').progress('set progress', progressPercentage);
+                $('.ui .progress').progress('set progress', progressPercentage).progress('set label','正在上传'+name);
                 uploadByChunk(file, chunkIndex+1);
             } else {
                 alert(response.data.info);
@@ -674,9 +674,13 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
                     'info': response.data.info});
                 isUploading = false;
                 $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+                $('.ui .progress').progress('set error').progress('set label', '出错');
+
             }
         }, function (response) {
+            isUploading = false;
              alert(response.status);
+            $('.ui .progress').progress('set error').progress('set label', '出错');
         }, function (evt) {
 
         });
