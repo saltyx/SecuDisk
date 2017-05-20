@@ -23,7 +23,7 @@ Rails.application.routes.draw do
       post 'login/', to: 'login#index'
 
       post 'upload/:id', to: 'upload#upload'
-      post 'upload_big_file/:id', to: 'upload#upload_big_file'
+      post 'uploadByChunk/:id', to: 'upload#upload_big_file'
 
       post 'folder/create', to: 'folder#create'
       delete 'folder/delete', to: 'folder#delete'

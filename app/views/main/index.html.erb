@@ -327,22 +327,37 @@
           <div class="bar">
             <div class="progress"></div>
           </div>
-          <div class="label">当前正在上传</div>
+          <div class="label">当前正在上传{{uncheckedFile.name}}</div>
+        </div>
+        <h4 class="ui horizontal divider header">
+          <i class="wait icon"></i>
+          等待上传
+        </h4>
+        <table class="ui celled striped table" ng-show="undefined != allUploadTasks.pendingTasks && 0 !== allUploadTasks.pendingTasks.length">
+          <tbody>
+            <tr ng-repeat="pendingTask in allUploadTasks.pendingTasks track by $index">
+              <td class="warning">{{pendingTask.name}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="ui message" ng-show="undefined == allUploadTasks.pendingTasks || 0 === allUploadTasks.pendingTasks.length">
+          还未有等待上传的文件
         </div>
         <h4 class="ui horizontal divider header">
           <i class="history icon"></i>
           历史上传
         </h4>
-        <table class="ui celled striped table" ng-show="undefined != allUploadTasks && 0 !== allUploadTasks.length">
+        <table class="ui celled striped table" ng-show="undefined != allUploadTasks.uploadedTasks && 0 !== allUploadTasks.uploadedTasks.length">
           <tbody>
-            <tr class="positive" ng-repeat="task in allUploadTasks track by $index">
+            <tr ng-repeat="task in allUploadTasks.uploadedTasks track by $index">
               <td>{{task.filename}}</td>
               <td>上传时间 {{task.time}}</td>
-              <td><i class="icon checkmark"></i></td>
+              <td class="positive" ng-show="task.status"><i class="icon checkmark"></i></td>
+              <td class="negative" ng-hide="task.status"><i class="icon close" ></i>{{task.info}}</td>
             </tr>
           </tbody>
         </table>
-        <div class="ui message" ng-show="undefined == allUploadTasks || 0 === allUploadTasks.length">
+        <div class="ui message" ng-show="undefined == allUploadTasks.uploadedTasks || 0 === allUploadTasks.uploadedTasks.length">
           还未有上传的文件
         </div>
       </div>

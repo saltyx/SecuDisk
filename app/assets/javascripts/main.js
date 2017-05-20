@@ -6,6 +6,9 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
 
     var dstFolderId = -1;
     var dstFolderStack = [];
+
+    var isUploading = false;
+
     if (0 === localStorage.length) {
         window.location.href = '/login';
     } else {
@@ -13,6 +16,9 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
 
         $scope.navFolders = [];
         $scope.navFolders.push({name: 'Root', id: 1});
+
+        $scope.allUploadTasks = {};
+
         //create new folder
         $scope.createFolder = function () {
             $('#createFolderModel').modal({
@@ -27,7 +33,17 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
         $scope.uploadFile = function () {
             $('#uploadFile').modal({
                 onApprove: function () {
-                    uploadUncheckedFile();
+                    if (PendingTasks.length >= 3) {
+                        alert('请等待，当前队列已满');
+                    } else {
+                        PendingTasks.push($scope.uncheckedFile);
+                        $scope.allUploadTasks.pendingTasks = PendingTasks;
+                        console.log('[file]'+$scope.uncheckedFile);
+                        if (!isUploading) {
+                            console.log('[log] do uploading tasks');
+                            uploadUncheckedFile();
+                        }
+                    }
                 }
             }).modal('show');
         };
@@ -392,32 +408,51 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
     }
 
     function uploadUncheckedFile() {
-       Upload.upload({
+        if (0 === PendingTasks.length) return;
+        var file = PendingTasks.shift();
+        console.log('uploading '+ file.name);
+        isUploading = true;
+        Upload.upload({
            url: 'api/v1/upload/'+CurrentFolder,
            method: 'post',
            data: {
-               filename: $scope.uncheckedFile.name,
-               filesize: $scope.uncheckedFile.size
+               filename: file.name,
+               filesize: file.size
            },
-           file: $scope.uncheckedFile
-       }).then(function (response) {
-           if (200 === response.data.success) {
-               change(CurrentFolder);
-               var date = new Date();
-               UploadedTasks.push({'filename':$scope.uncheckedFile.name,'time':date.getMonth()+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes()});
-               $scope.allUploadTasks = UploadedTasks;
-               $('.ui .progress').progress('reset').progress('set label', '等待上传');
-           } else {
-               alert(response.data.info);
-               $('.ui .progress').progress('set error').progress('set label', '出错');
-           }
-       }, function (response) {
+           file: file
+        }).then(function (response) {
+            if (200 === response.data.success) {
+                change(CurrentFolder);
+                var date = new Date();
+                UploadedTasks.push({'filename':file.name, 'time':date.getMonth()+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes(), 'status':true});
+                $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+                $scope.allUploadTasks.pendingTasks = PendingTasks;
+                $('.ui .progress').progress('reset').progress('set label', '等待上传');
+            } else {
+                alert(response.data.info);
+                $('.ui .progress').progress('set error').progress('set label', '出错');
+                UploadedTasks.push({'filename':file.name, 'time':date.getMonth()+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes(), 'status':false, 'info': response.data.info});
+                $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+                $scope.allUploadTasks.pendingTasks = PendingTasks;
+            }
+            isUploading = false;
+            uploadUncheckedFile();
+
+        }, function (response) {
            alert(response.status);
-       }, function (evt) {
-           var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-           console.log(evt.loaded);
-           $('.ui .progress').progress('set progress', progressPercentage);
-       })
+            UploadedTasks.push({'filename':file.name,
+                'time':date.getMonth()+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes(),
+                'status':false, 'info': response.status});
+            $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+            $scope.allUploadTasks.pendingTasks = PendingTasks;
+            isUploading = false;
+            uploadUncheckedFile();
+        }, function (evt) {
+            isUploading = true;
+            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+            //console.log(evt.loaded);
+            $('.ui .progress').progress('set progress', progressPercentage);
+        })
     }
 
     function query(queryText) {
@@ -579,5 +614,5 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             alert(response.status);
         })
     }
-
+    
 });
