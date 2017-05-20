@@ -96,30 +96,36 @@ class Api::V1::UploadController < Api::V1::BaseController
     key = "#{file_name}##{folder_id}"
     unchecked_index = $redis.get key
 
+    logger.info unchecked_index
+
     if unchecked_index.nil?
       # redis中不存在数据则加入
       path = dir.concat "#{get_timestamp}/"
       Dir.mkdir path
       path = path.concat file_name
 
-      if chunk_index == 1
+      if chunk_index == 0
         File.open(path, 'ab+') do |f|
           f.write params[:file].read
         end
         $redis.set(key, chunk_index)
+        file = UserFile.create(user_id: current_user.id, from_folder: folder_id,file_size: file_size,
+                               file_name: file_name, is_folder: false, file_path: path)
+        logger.info '[id]'+file.id.to_s
         response_status(200, 'ok')
       else
         unsafe_status
       end
 
     else
+      logger.info folder_id.to_s+file_name+current_user.id.to_s
       file = UserFileHelper.get_the_file(folder_id, file_name, current_user.id)
-      return unsafe_status if file.nil?
+      return file_not_exist if file.nil?
 
       path = file.file_path
 
       #redis中存在下标则检查
-      if chunk_index == unchecked_index+1
+      if chunk_index == unchecked_index.to_i+1
         # accept the status
         File.open(path, 'ab+') do |f|
           f.write params[:file].read

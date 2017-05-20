@@ -410,49 +410,65 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
     function uploadUncheckedFile() {
         if (0 === PendingTasks.length) return;
         var file = PendingTasks.shift();
+        $scope.uploadingFile = file;
         console.log('uploading '+ file.name);
         isUploading = true;
-        Upload.upload({
-           url: 'api/v1/upload/'+CurrentFolder,
-           method: 'post',
-           data: {
-               filename: file.name,
-               filesize: file.size
-           },
-           file: file
-        }).then(function (response) {
-            if (200 === response.data.success) {
-                change(CurrentFolder);
-                var date = new Date();
-                UploadedTasks.push({'filename':file.name, 'time':date.getMonth()+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes(), 'status':true});
-                $scope.allUploadTasks.uploadedTasks = UploadedTasks;
-                $scope.allUploadTasks.pendingTasks = PendingTasks;
-                $('.ui .progress').progress('reset').progress('set label', '等待上传');
-            } else {
-                alert(response.data.info);
-                $('.ui .progress').progress('set error').progress('set label', '出错');
-                UploadedTasks.push({'filename':file.name, 'time':date.getMonth()+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes(), 'status':false, 'info': response.data.info});
-                $scope.allUploadTasks.uploadedTasks = UploadedTasks;
-                $scope.allUploadTasks.pendingTasks = PendingTasks;
-            }
-            isUploading = false;
-            uploadUncheckedFile();
+        if (file.size > 10*1024*1024) {
+            uploadByChunk(file, 0);
+        } else {
+            Upload.upload({
+                url: 'api/v1/upload/' + CurrentFolder,
+                method: 'post',
+                data: {
+                    filename: file.name,
+                    filesize: file.size
+                },
+                file: file
+            }).then(function (response) {
+                if (200 === response.data.success) {
+                    change(CurrentFolder);
+                    var date = new Date();
+                    UploadedTasks.push({
+                        'filename': file.name,
+                        'time': date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes(),
+                        'status': true
+                    });
+                    $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+                    $scope.allUploadTasks.pendingTasks = PendingTasks;
+                    $('.ui .progress').progress('reset').progress('set label', '等待上传');
+                } else {
+                    alert(response.data.info);
+                    $('.ui .progress').progress('set error').progress('set label', '出错');
+                    UploadedTasks.push({
+                        'filename': file.name,
+                        'time': date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes(),
+                        'status': false,
+                        'info': response.data.info
+                    });
+                    $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+                    $scope.allUploadTasks.pendingTasks = PendingTasks;
+                }
+                isUploading = false;
+                uploadUncheckedFile();
 
-        }, function (response) {
-           alert(response.status);
-            UploadedTasks.push({'filename':file.name,
-                'time':date.getMonth()+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes(),
-                'status':false, 'info': response.status});
-            $scope.allUploadTasks.uploadedTasks = UploadedTasks;
-            $scope.allUploadTasks.pendingTasks = PendingTasks;
-            isUploading = false;
-            uploadUncheckedFile();
-        }, function (evt) {
-            isUploading = true;
-            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-            //console.log(evt.loaded);
-            $('.ui .progress').progress('set progress', progressPercentage);
-        })
+            }, function (response) {
+                alert(response.status);
+                UploadedTasks.push({
+                    'filename': file.name,
+                    'time': date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes(),
+                    'status': false, 'info': response.status
+                });
+                $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+                $scope.allUploadTasks.pendingTasks = PendingTasks;
+                isUploading = false;
+                uploadUncheckedFile();
+            }, function (evt) {
+                isUploading = true;
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                //console.log(evt.loaded);
+                $('.ui .progress').progress('set progress', progressPercentage);
+            })
+        }
     }
 
     function query(queryText) {
@@ -614,5 +630,54 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             alert(response.status);
         })
     }
-    
+
+    function uploadByChunk(file, chunkIndex) {
+        var date = new Date();
+        var size = file.size;
+        var name = file.name;
+        var totalChunks = Math.ceil(size/(1024*1024));
+        if (chunkIndex >= totalChunks) {
+            $('.ui .progress').progress('reset').progress('set label','等待上传');
+            UploadedTasks.push({'filename': name,
+                'time': date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes(),
+                'status': true});
+            $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+            change(CurrentFolder);
+            isUploading = false;
+            uploadUncheckedFile();
+            return;
+        }
+        var spliceStart = chunkIndex*(1024*1024);
+        var spliceEnd = (chunkIndex+1)*(1024*1024) > size ? size : (chunkIndex+1)*(1024*1024);
+        var blob = file.slice(spliceStart, spliceEnd);
+        Upload.upload({
+           url: '/api/v1/uploadByChunk/'+CurrentFolder,
+            method: 'post',
+            data :{
+                filesize: size,
+                filename: name,
+                chunks: totalChunks,
+                chunk_index: chunkIndex
+            },
+            file:blob
+        }).then(function (response) {
+            if (200 === response.data.success) {
+                var progressPercentage = parseInt(100.0 * (chunkIndex+1) / totalChunks);
+                //console.log(evt.loaded);
+                $('.ui .progress').progress('set progress', progressPercentage);
+                uploadByChunk(file, chunkIndex+1);
+            } else {
+                alert(response.data.info);
+                UploadedTasks.push({'filename': name,
+                    'time': date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes(),
+                    'status': false,
+                    'info': response.data.info});
+                $scope.allUploadTasks.uploadedTasks = UploadedTasks;
+            }
+        }, function (response) {
+             alert(response.status);
+        }, function (evt) {
+
+        });
+    }
 });
