@@ -672,6 +672,7 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
                     'time': date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes(),
                     'status': false,
                     'info': response.data.info});
+                isUploading = false;
                 $scope.allUploadTasks.uploadedTasks = UploadedTasks;
             }
         }, function (response) {

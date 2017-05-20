@@ -118,7 +118,7 @@ class Api::V1::UploadController < Api::V1::BaseController
       end
 
     else
-      logger.info folder_id.to_s+file_name+current_user.id.to_s
+
       file = UserFileHelper.get_the_file(folder_id, file_name, current_user.id)
       return file_not_exist if file.nil?
 
@@ -131,7 +131,7 @@ class Api::V1::UploadController < Api::V1::BaseController
           f.write params[:file].read
         end
 
-        if chunk_index == total_chunks
+        if chunk_index+1 == total_chunks
           #最后一片
           current_user.used_storage = current_user.used_storage+file_size
           current_user.save
