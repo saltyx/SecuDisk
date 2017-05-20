@@ -224,6 +224,7 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
             if (true === value.is_folder) {
                 folders.push(value);
             } else {
+                value.file_size = calculateFileSize(value.file_size);
                 files.push(value);
             }
         });
@@ -684,5 +685,12 @@ app.controller('mainCtrl',function ($scope, $http, Upload) {
         }, function (evt) {
 
         });
+    }
+
+    function calculateFileSize(size) {
+        if (size < 1024) return size.toFixed(2) + ' b';
+        if (size < 1024 * 1024) return (size/1024).toFixed(2) + 'Kb';
+        if (size < 1024 * 1024 * 1024) return (size/(1024*1024)).toFixed(2) + 'Mb';
+        return (size/(1024*1024*1024)).toFixed(2) + 'Gb';
     }
 });

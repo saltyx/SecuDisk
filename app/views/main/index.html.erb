@@ -102,7 +102,7 @@
               <div class="description">
                 <p>创建于 {{file.created_at}}</p>
                 <p>更新于 {{file.updated_at}}</p>
-                <p>大小为 {{file.file_size}} b</p>
+                <p>大小为 {{file.file_size}}</p>
                 <p>共下载 {{file.download_times}}次</p>
               </div>
             </div>
@@ -327,11 +327,11 @@
           <div class="bar">
             <div class="progress"></div>
           </div>
-          <div class="label" ng-model="uploadingFile">当前正在上传{{uploadingFile.name}}</div>
+          <div class="label">等待上传</div>
         </div>
         <h4 class="ui horizontal divider header">
           <i class="wait icon"></i>
-          等待上传
+          上传队列
         </h4>
         <table class="ui celled striped table" ng-show="undefined != allUploadTasks.pendingTasks && 0 !== allUploadTasks.pendingTasks.length">
           <tbody>
@@ -345,7 +345,7 @@
         </div>
         <h4 class="ui horizontal divider header">
           <i class="history icon"></i>
-          历史上传
+          近期上传文件
         </h4>
         <table class="ui celled striped table" ng-show="undefined != allUploadTasks.uploadedTasks && 0 !== allUploadTasks.uploadedTasks.length">
           <tbody>
