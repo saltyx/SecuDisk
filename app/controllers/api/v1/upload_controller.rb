@@ -48,7 +48,7 @@ class Api::V1::UploadController < Api::V1::BaseController
       current_user.save!
 
       file = UserFile.create(user_id: current_user.id, from_folder: folder_id,file_size: filesize,
-                       file_name: filename, is_folder: false, file_path: path)
+                       file_name: filename, is_folder: false, file_path: path,sha256: EncryptHelper.calculate_sha256(path))
 
       response_status(200, file.id)
     else
@@ -111,7 +111,7 @@ class Api::V1::UploadController < Api::V1::BaseController
         $redis.set(key, chunk_index)
         file = UserFile.create(user_id: current_user.id, from_folder: folder_id,file_size: file_size,
                                file_name: file_name, is_folder: false, file_path: path)
-        logger.info '[id]'+file.id.to_s
+
         response_status(200, 'ok')
       else
         unsafe_status
@@ -133,8 +133,11 @@ class Api::V1::UploadController < Api::V1::BaseController
 
         if chunk_index+1 == total_chunks
           #最后一片
+          file.sha256 = EncryptHelper.calculate_sha256 path
+          file.save
           current_user.used_storage = current_user.used_storage+file_size
           current_user.save
+
           $redis.del key
         else
           $redis.set(key, chunk_index)

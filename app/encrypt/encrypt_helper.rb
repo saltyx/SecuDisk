@@ -45,7 +45,7 @@ module EncryptHelper
         loop do
           r = enc.read(4096)
           break unless r
-          temp = cipher.update(r)
+           temp = cipher.update(r)
           dec << temp
         end
       end
@@ -64,4 +64,7 @@ module EncryptHelper
     false
   end
 
+  def self.calculate_sha256(file_path)
+    Digest::SHA256.hexdigest(File.open(file_path,'r'){|f| f.read})
+  end
 end
